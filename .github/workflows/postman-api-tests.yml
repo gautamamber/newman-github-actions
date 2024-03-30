@@ -25,15 +25,9 @@ jobs:
       - 
         name: "Run tests"
         run: "newman run NewManTesting.postman_collection.json -e NewmanEnv.postman_environment.json -r htmlextra --reporter-htmlextra-export htmlreport.html  > runreport1.html"
-      
-      - name: Send email notification
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.example.com
-          server_port: 587
-          username: ${{ secrets.EMAIL_USERNAME }}
-          password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "GitHub Actions Workflow Notification"
-          to: user@example.com
-          body: "The GitHub Actions workflow has completed successfully."
-          html: true
+
+      - name: Notify Slack
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"Testing successful"}' $SLACK_WEBHOOK_URL
